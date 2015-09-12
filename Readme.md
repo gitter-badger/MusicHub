@@ -68,6 +68,7 @@ The program will be listening at the port 1080 in your localhost for now. You ca
 + Upload to upload your music........(This records the mp3 metadata in the database)
 + Credits - Obvious
 + 404 - This is One easter egg smeared page :P
+
 ### Contributing
 + Get a good grasp of golang.([This book](https://www.golang-book.com/) is fast and awesome)
 + Please report any issues of loopholes in this project.
