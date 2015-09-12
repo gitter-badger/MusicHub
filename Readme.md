@@ -58,7 +58,7 @@ cd $GOPATH/src/server/server/
 go install
 $GOPATH/bin/server
 ```
-The program will be listening at the port 1080 in your localhost for now. You can change that by altering the line [15 in main.go](https://github.com/aki237/MMusicHub/blob/master/main.go#L15).
+The program will be listening at the port 1080 in your localhost for now. You can change that by altering the line [15 in main.go](https://github.com/aki237/MusicHub/blob/master/main.go#L15).
 
 ### Usage
 ![Home Page](pics/homepage.png)
