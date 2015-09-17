@@ -11,6 +11,42 @@ import _ "server/go-sqlite3"
 import "database/sql"
 import "strings"
 
+//
+func Api(w http.ResponseWriter , r *http.Request){
+	fmt.Println("API_URL Requested")
+	if r.Method=="GET"{
+		urlQuery := string(r.URL.RawQuery)[1:]
+		fmt.Println(urlQuery)
+		mdb,err := sql.Open("sqlite3","mdb.db")
+		var apiresult string // = "<pre>"
+		if err != nil {
+				fmt.Println("Unable to access db")
+		}
+		rows, err := mdb.Query("select * from mdatabase")
+		if err != nil {
+			fmt.Println(err)
+		}
+		var title,album,artist,year,md5sum,songURL string
+		var songNO int
+		defer rows.Close()
+		for rows.Next() {
+			err := rows.Scan(&songNO,&title,&album,&artist,&year,&md5sum,&songURL)
+			songURL = strings.Replace(songURL, "./song/","",1)
+			songURL = "hear?=" + songURL
+			if err != nil {
+				fmt.Println(err)
+			}
+			if (isComparable(album,urlQuery)){
+				apiresult = apiresult + "{\n\t\"Title\" : \"" + title + "\",\n\t\"Album\" : \""+album +"\",\n\t\"Artist\" : \""+artist +"\",\n\t\"Year\" : " + year + ",\n\t\"URL\" : \"" + songURL + "\"\n},\n"
+			}
+		}
+		// apiresult = apiresult + "</pre>"
+		w.Header().Set("Content-Type","text/json")
+		fmt.Fprintf(w,apiresult)
+	}
+}
+
+
 //This function is used to compare different strings....
 //As 'Ko' and 'KO' are not the same according to go (any other damn language), this function considers
 // ('Ko' == 'KO') to be true
@@ -34,13 +70,11 @@ func isComparable(main string , compared string) (bool){
 
 
 //Easter Egg !!!!!
-/*
-NO OFFENCE PLEASE
-*/
 func Fourofour(w http.ResponseWriter , r *http.Request)  {
 	w.Header().Set("Content-Type","text/html")
 	fmt.Fprintf(w,"<center><h1><strike><pre> 404 </pre></strike></h1></center><br>Wow you have found this page....")
 }
+
 //The funtion handler for the /credits URL
 func Credits(w http.ResponseWriter , r *http.Request){
 	fmt.Println("URL Requested")
@@ -56,21 +90,21 @@ func Search(w http.ResponseWriter, r *http.Request){
 	if r.Method == "GET" {
 		fmt.Println("Search URL Requested")
 		w.Header().Set("Content-Type","text/html",)
-		fmt.Fprintf(w, "<body><center><font size=40>Write the search query : <br><form action=\"/search\" name=\"searchbox\" method=\"POST\"><input type=\"text\" name=\"keyword\" value=\"SAMPLEQUERY\"/><br><input type=\"submit\" value=\"Search\"/></form></font></center></body> ")
+		fmt.Fprintf(w, "<style>.search{height:100px;width:400px;border-radius:10px;background-color:black;color :white;font-family:monospace;font-size:50px;}.button{height:60px; width:160px;background-color:white; color:black;border-radius:25px;font-family:sans-serif;}</style><body bgcolor=#000000><center><font size=40 color=#FFFFFF>Write the search query : <br><form action=\"/search\" name=\"searchbox\" method=\"POST\"><input type=\"text\" name=\"keyword\" class=\"search\" /><br><br><input type=\"submit\" class=\"button\" value=\"Search\"/></form></font></center></body> ")
 	}else{
-		mdb,err := sql.Open("sqlite3","song/mdb.db")
+		mdb,err := sql.Open("sqlite3","mdb.db")
 		if err != nil {
-				fmt.Println("Unable to access db")
+			fmt.Println("Unable to access db")
 		}
 		rows, err := mdb.Query("select * from mdatabase")
 		if err != nil {
 			fmt.Println(err)
 		}
-		htmlContent := "<style>body{font-family:monospace;background-color:#FF265A;color:#000022;}td{border:solid;}a,a:hover,a:active,a:visited{text-decoration:none;}</style>"
-		titleContent := "<body><h2>Results based on song title search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Download URL</strong></td></tr>"
-		albumContent := "<h2>Results based on song album search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Download URL</strong></td></tr>"
-		artistContent := "<h2>Results based on song artist search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Download URL</strong></td></tr>"
-		yearContent := "<h2>Results based on song release year</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Download URL</strong></td></tr>"
+		htmlContent := "<style>body{font-family:monospace;background-color:#3e3e3e;color:#000022;}td{border:solid;}a,a:hover,a:active,a:visited{text-decoration:none;}</style>"
+		titleContent := "<body><h2>Results based on song title search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Hear Column</strong></td></tr>"
+		albumContent := "<h2>Results based on song album search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Hear Column</strong></td></tr>"
+		artistContent := "<h2>Results based on song artist search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Hear Column</strong></td></tr>"
+		yearContent := "<h2>Results based on song release year</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Hear Column</strong></td></tr>"
 		r.ParseForm()
 		keyword := r.FormValue("keyword")
 		var title,album,artist,year,md5sum,songURL string
@@ -83,16 +117,16 @@ func Search(w http.ResponseWriter, r *http.Request){
 				fmt.Println(err)
 			}
 			if (isComparable(title,keyword)){
-				titleContent = titleContent + "<tr><td>"+title+"</td><td>"+album+"</td><td> "+artist+"</td><td> "+year+"</td><td> <a href=\"hear?="+songURL+"\">Download</a></td></tr>"
+				titleContent = titleContent + "<tr><td>"+title+"</td><td>"+album+"</td><td> "+artist+"</td><td> "+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
 			}
 			if (isComparable(album,keyword)){
-				albumContent = albumContent + "<tr><td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><a href=\"hear?="+songURL+"\">Download</a></td></tr>"
+				albumContent = albumContent + "<tr><td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
 			}
 			if (isComparable(artist,keyword)){
-				artistContent = artistContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><a href=\"hear?="+songURL+"\">Download</a></td></tr>"
+				artistContent = artistContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
 			}
 			if (isComparable(year,keyword)){
-				yearContent = yearContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><a href=\"hear?="+songURL+"\">Download</a></td></tr>"
+				yearContent = yearContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
 			}
 			//fmt.Println(album, songURL)
 		}
@@ -100,7 +134,7 @@ func Search(w http.ResponseWriter, r *http.Request){
 		albumContent = albumContent + "</table>"
 		artistContent = artistContent + "</table>"
 		yearContent = yearContent + "</table></body>"
-		htmlContent = htmlContent +  titleContent+albumContent+artistContent+yearContent
+		htmlContent = "<style>audio{background-color:rgba(126,20,20,1.0);width:500px;color:#FF265A}</style>"+htmlContent +  titleContent+albumContent+artistContent+yearContent
 		// fmt.Println(htmlContent)
 		w.Header().Set("Content-Type","text/html",)
 		fmt.Println("Post Method")
@@ -125,7 +159,7 @@ func Upload(w http.ResponseWriter , r *http.Request){
 		defer file.Close()
 		fmt.Println(handler.Header["Content-Type"])
 		//fmt.Println(returnMD5.ReturnMD5(handler.Filename))
-		if(handler.Header["Content-Type"][0] == "audio/mpeg" || handler.Header["Content-Type"][0] == "audio/mp3"){
+		if(handler.Header["Content-Type"][0] == "audio/mpeg" || handler.Header["Content-Type"][0] == "audio/mp3") {
 			if(strings.Contains(handler.Filename," ")){
 				handler.Filename = strings.Replace(handler.Filename," ","_",-1)
 				fmt.Println(handler.Filename, "indn")
@@ -141,7 +175,7 @@ func Upload(w http.ResponseWriter , r *http.Request){
 			fmt.Println("Songfile : ","./song/"+handler.Filename)
 			md5sum := returnMD5.ReturnMD5("./song/"+handler.Filename)
 			fmt.Println(title,album,artist,year,md5sum)
-			mdb,err := sql.Open("sqlite3","song/mdb.db")
+			mdb,err := sql.Open("sqlite3","mdb.db")
 			if err != nil {
 					fmt.Println("Unable to access db")
 			}
@@ -175,7 +209,7 @@ func Upload(w http.ResponseWriter , r *http.Request){
 }
 
 
-//The http://<address>:<port>/ display funtion handler
+//The http://<address>:<port>/ display funtion handler\
 func Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("URL Requested")
 	//baseurl := r.URL.Path[1:]
