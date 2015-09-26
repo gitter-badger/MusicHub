@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <title>Api Docs - MusicHub</title>
+  </head>
+  <style type="text/css">
+  textarea{
+    font-size: 14px;
+  }
+  </style>
+  <script type="text/javascript">
+  function putResult () {
+    var queryString = document.getElementsByName('query')[0].value;
+    var based = document.getElementsByTagName('select')[0].value;
+    var aurl = document.getElementsByTagName('a')[1];
+    var qs="/api/search?query="+queryString+"&based="+based;
+    aurl.setAttribute("href",qs);
+    aurl.innerHTML="http://<listen-address>:<port>"+qs;
+  }
+  </script>
+  <body bgcolor="#9384f4">
+    <font face="Menlo">
+      <center><h1>Api Docs - MusicHub</h1></center>
+      <h2>Api Docs for developers</h2><hr>
+      <p>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is a Api handling docs,for developers. This facility is a work under progress.
+	Still few implementations has been made so far. If you are not a fan of XML Data handling, please wait till JSON is made available.
+	For this tutorial it is assumed that you know what is meant by XML(<b>EX</b>tensible <b>M</b>arkup <b>L</b>anguage) and JSON(<b>J</b>ava<b>S</b>cript <b>O</b>bject <b>N</b>otation).
+	XML is a HTML like data notation Syntax.</p>
+  <h2>XML</h2><hr>
+  <textarea rows=12 cols=50 readonly="true">
+<languages>
+  <language>
+     <name>golang</name>
+     <features>80</features>
+     <performace>99</performace>
+  </language>
+  <language>
+     <name>Python</name>
+     <features>95</features>
+     <performace>66</performace>
+  </language>
+</languages>
+  </textarea>
+  <p>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The above is an example of XML document that delivers readable message about the Programming languages.
+  This document can be parsed in any language natively or with extra libraries. This server app also returns xml data based on query.</p>
+  <h3>Query Method : </h3>
+  <p>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let the MusicHub server is listening at port 1080, locally. The established server api search query url is <a href="http://127.0.0.1:1080/api/search">http://127.0.0.1:1080/api/search</a>. 
+    Queries are handled through urls only. There is no form to post and to get the results back.
+    If a user searches for a (for example : "Overexposed"), append the API SQURL(API Search Query URL - API Squirell) with "?query=Overexposed" (The Squirell should look like "http://127.0.0.1:1080/api/search?query=Overexposed". If your database contains any song from the given query, the server returns a xml document. This is a basic query string. Obviously not always the user search is based on Album.The server by default queries the database based on album search.
+  </p>
+  <p>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let us make our squirells more specific that the server searches accordingly.
+    To search the given keyword based on artist (example artist:"Maroon5"), the query string must be 
+    "?query=Maroon5&based=artist". Append that to the squirell. Now the Sqirell should look like "http://127.0.0.1:1080/api/search?query=Maroon5&based=artist"
+    If you have any Marron5 based songs in your database it will return something. 
+  </p>
+  <p>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The XML file obtained is human readable. In "songs" tag, every "song" tag contains the song attributes.
+  <li>title - Title of the song</li>
+  <li>album - Album of the song</li> 
+  <li>artist - Artist of the song</li>
+  <li>year - the year when the song is released</li>
+  <li>url - Song URL in the server</li>
+  The Song URL shoul be suffixed with "http://127.0.0.1:1080/" or (whatever address and the port MusicHub listens......) to get the mp3 resource. 
+  </p>
+  <h2>API Playground</h2>
+  <p>
+    This is form for you to fill up and see how the url looks like after.<br>
+    <h3>Query String  <input type="text" name="query" onkeyup="putResult();" /><br>
+    Search Based on  
+    <select onchange="putResult();">
+      <option value="title">Title</option>
+      <option value="album">Album</option>
+      <option value="artist">Artist</option>
+      <option value="year">Year</option>
+    </select> <br>
+    <a href="#">Your URL Here</a><h3>
+  </p>
+  <p>
+  <li>
+    Please avoid spaces in search query.
+  </li>
+  <li>
+    Please avoid symbols in search query.
+  </li>
+  <li>
+    The query handlers can be in any order, (query=....&based=.... or based=....&query=....)
+    Generally the first one is prefered.
+  </li>
+  <li>
+    Developer Bonus : Try the query string "*ALL^*" and any based keyword &#128521; <br>*Only for developer purposes.
+  </li>
+  <br><br><br><br><br><br>
+    </font>
+  </body>
+</html>
