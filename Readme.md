@@ -33,7 +33,7 @@ This projects is of five parts....
 Probably we won't touch the go-sqlite3..... So let us compile it into library. Else while running each time it take quite some time to compile.
 ```
 cd $GOPATH/src/server/go-sqlite3
-go Installation
+go install
 ```
 This will compile that into a library.
 Now lets compile all other components and run the server.....
