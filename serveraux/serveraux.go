@@ -12,14 +12,82 @@ import _ "server/go-sqlite3"
 import "database/sql"
 import "strings"
 
-//
+func times(str string, ch byte)(int) {
+	i := 0
+	count :=0
+	for(i < len(str)){
+		if (str[i]==ch){
+			count+=1
+		}
+		i++
+	}
+	return count
+}
+
+func log(printa string) {
+	fmt.Println(printa);
+}
+
+
+//Function for API requests
+//For More details refer api url of your server.
+//(http://<address>:<port>/api)
 func Api(w http.ResponseWriter , r *http.Request){
 	fmt.Println("API_URL Requested")
 	if r.Method=="GET"{
-		urlQuery := string(r.URL.RawQuery)[1:]
+		urlQuery := string(r.URL.RawQuery)[:]
 		fmt.Println(urlQuery)
+		if (urlQuery == ""){
+			fmt.Fprintf(w,"Bad Request")
+			return
+		}
+
+		urlParts := strings.Split(urlQuery,"&")
+		fmt.Println(urlParts)
+		if(times(urlQuery,'=')<3){
+			urlQuery += "="
+		}
+		var queryString string ="sample"
+		var searchBase string ="album"
+		var mode string ="xml"
+		i := 0
+		for (i<len(urlParts)){
+				if(strings.Contains(urlParts[i],"query")){
+					fmt.Println("Part %d contains query",i)
+					if (!strings.Contains(urlParts[i],"=")){
+						urlParts[i]+="="
+					}
+					queryString = strings.Split(urlParts[i],"=")[1]
+				}
+				if(strings.Contains(urlParts[i],"based")){
+					fmt.Println("Part %d contains based",i)
+					if (!strings.Contains(urlParts[i],"=")){
+						urlParts[i]+="="
+					}
+					searchBase = strings.Split(urlParts[i],"=")[1]
+				}
+				if(strings.Contains(urlParts[i],"mode")){
+					fmt.Println("Part %d contains mode",i)
+					if (!strings.Contains(urlParts[i],"=")){
+						urlParts[i]+="="
+					}
+					mode = strings.Split(urlParts[i],"=")[1]
+				}
+				i++;
+				fmt.Println(i,len(urlParts))
+		}
+
+		if (len(searchBase)==0) {
+			log("Empty")
+			searchBase ="album"
+		}
+		if (len(queryString)==0) {
+			log("Empty")
+			queryString ="sample"
+		}
+		fmt.Println(queryString,searchBase,mode,len(queryString))
 		mdb,err := sql.Open("sqlite3","mdb.db")
-		var apiresult string // = "<pre>"
+		var apiresult string = "<songs>\n"
 		if err != nil {
 				fmt.Println("Unable to access db")
 		}
@@ -37,12 +105,31 @@ func Api(w http.ResponseWriter , r *http.Request){
 			if err != nil {
 				fmt.Println(err)
 			}
-			if (isComparable(album,urlQuery)){
-				apiresult = apiresult + "{\n\t\"Title\" : \"" + title + "\",\n\t\"Album\" : \""+album +"\",\n\t\"Artist\" : \""+artist +"\",\n\t\"Year\" : " + year + ",\n\t\"URL\" : \"" + songURL + "\"\n},\n"
+			switch searchBase{
+			case "title":
+				if (isComparable(title,queryString)){
+					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+				}
+			case "album":
+				if (isComparable(album,queryString)){
+					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+				}
+			case "artist":
+				if (isComparable(artist,queryString)){
+					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+				}
+			case "year":
+				if (isComparable(year,queryString)){
+					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+				}
+			default:
+				if (isComparable(album,queryString)){
+					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+				}
 			}
 		}
-		// apiresult = apiresult + "</pre>"
-		w.Header().Set("Content-Type","text/json")
+		apiresult = apiresult + "</songs>"
+		w.Header().Set("Content-Type","application/xml")
 		fmt.Fprintf(w,apiresult)
 	}
 }
@@ -55,6 +142,9 @@ func isComparable(main string , compared string) (bool){
 	value := false
 	if compared == " " || compared == "  " || compared == "  " {
 	}else{
+		if(compared == "*ALL^*"){
+			value = true
+		}
 		if(strings.Contains(main,compared) || strings.Contains(main,strings.ToUpper(compared))){
 			value = true
 		}
