@@ -1,6 +1,7 @@
 package serveraux
 
 import 	"fmt"
+import "strconv"
 import	"net/http"
 import "os"
 import "io"
@@ -109,6 +110,7 @@ func Search(w http.ResponseWriter, r *http.Request){
 		keyword := r.FormValue("keyword")
 		var title,album,artist,year,md5sum,songURL string
 		var songNO int
+		var idname int = 1
 		defer rows.Close()
 		for rows.Next() {
 			err := rows.Scan(&songNO,&title,&album,&artist,&year,&md5sum,&songURL)
@@ -117,25 +119,26 @@ func Search(w http.ResponseWriter, r *http.Request){
 				fmt.Println(err)
 			}
 			if (isComparable(title,keyword)){
-				titleContent = titleContent + "<tr><td>"+title+"</td><td>"+album+"</td><td> "+artist+"</td><td> "+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
+				titleContent = titleContent + "<tr><td>"+title+"</td><td>"+album+"</td><td> "+artist+"</td><td> "+year+"</td><td><audio id=\"a"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('a"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
 			if (isComparable(album,keyword)){
-				albumContent = albumContent + "<tr><td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
+				albumContent = albumContent + "<tr><td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"b"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('b"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
 			if (isComparable(artist,keyword)){
-				artistContent = artistContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
+				artistContent = artistContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"c"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('c"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
 			if (isComparable(year,keyword)){
-				yearContent = yearContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio src=\"hear?="+songURL+"\" controls=\"\">Download</audio></td></tr>"
+				yearContent = yearContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"d"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('d"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
+			idname++
 			//fmt.Println(album, songURL)
 		}
 		titleContent = titleContent + "</table>"
 		albumContent = albumContent + "</table>"
 		artistContent = artistContent + "</table>"
 		yearContent = yearContent + "</table></body>"
-		htmlContent = "<style>audio{background-color:rgba(126,20,20,1.0);width:500px;color:#FF265A}</style>"+htmlContent +  titleContent+albumContent+artistContent+yearContent
-		// fmt.Println(htmlContent)
+		htmlContent = "<style>audio{background-color:rgba(126,20,20,1.0);width:500px;color:#FF265A}</style>"+htmlContent+titleContent+albumContent+artistContent+yearContent;
+		htmlContent = "<script type=\"text/javascript\">function isPlaying(idname){var elem = document.getElementsByTagName('audio');for(var idx = 0;idx<elem.length;idx++){if (!(elem[idx].id == idname)) {elem[idx].pause();}}var audio = document.getElementById(idname);audio.play();}</script>"+htmlContent
 		w.Header().Set("Content-Type","text/html",)
 		fmt.Println("Post Method")
 		fmt.Fprintf(w, "<center><h1>Results</h1></center> \n %s",htmlContent)
