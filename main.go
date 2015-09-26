@@ -13,5 +13,5 @@ func main() {
 	http.HandleFunc("/credits",serveraux.Credits)
 	http.HandleFunc("/404",serveraux.Fourofour)
 	http.HandleFunc("/", serveraux.Handler)
-	http.ListenAndServe("192.168.0.100:1080", nil)
+	http.ListenAndServe("localhost:1080", nil)
 }
