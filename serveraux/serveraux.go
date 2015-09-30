@@ -284,7 +284,10 @@ func Upload(w http.ResponseWriter , r *http.Request){
 		defer file.Close()
 		fmt.Println(handler.Header["Content-Type"])
 		//fmt.Println(returnMD5.ReturnMD5(handler.Filename))
-		if(handler.Header["Content-Type"][0] == "audio/mpeg" || handler.Header["Content-Type"][0] == "audio/mp3") {
+		// if(handler.Header["Content-Type"][0] == "audio/mpeg" || handler.Header["Content-Type"][0] == "audio/mp3") {
+		switch (handler.Header["Content-Type"][0]){
+		case "audio/mpeg":
+		case "audio/mp3":
 			if(strings.Contains(handler.Filename," ")){
 				handler.Filename = strings.Replace(handler.Filename," ","_",-1)
 				fmt.Println(handler.Filename, "indn")
@@ -323,11 +326,6 @@ func Upload(w http.ResponseWriter , r *http.Request){
 			if err != nil{
 				fmt.Println("Unable to generate album art for "+"./song/"+handler.Filename+"\n",err)
 			}
-			// cmd = exec.Command("mv",strings.Replace(handler.Filename,".mp3",".*",-1),"./song/")
-			// err = cmd.Run()
-			// if err != nil{
-			// 	log("Unable mv the file - file not found")
-			// }
 			fmt.Println(title,album,artist,year,md5sum)
 			mdb,err := sql.Open("sqlite3","mdb.db")
 			if err != nil {
@@ -338,7 +336,7 @@ func Upload(w http.ResponseWriter , r *http.Request){
 				fmt.Println(err)
 			}
 			defer rows.Close()
-			if !rows.Next(){
+			if (!rows.Next()){
 				stmt, err := mdb.Prepare("INSERT INTO mdatabase(Title,Album,Artist,Year,MD5Sum,SongURL) VALUES(?,?,?,?,?,?)")
 				if err != nil{
 					fmt.Println("Unable to prepare database")
@@ -349,13 +347,14 @@ func Upload(w http.ResponseWriter , r *http.Request){
 					w.Header().Set("Content-Type","text/html",)
 					fmt.Fprintf(w,"<center><strong>Unable to process the metadata : May be the song name clashes with another song<br>Try saving it with a different name<strong></center>")
 				}
+				fmt.Fprintf(w,"<script>alert(\"Song successfully uploaded and added to the database\");window.location=\"/upload\";</script>")
 			}else{
 				fmt.Println("Already the song is in the database")
 				w.Header().Set("Content-Type","text/html",)
 				fmt.Fprintf(w,"<center><strong>The given song is already in the database<strong></center>")
 			}
 			defer mdb.Close()
-		}else{
+		default:
 			w.Header().Set("Content-Type","text/html",)
 			fmt.Fprintf(w,"<script type=\"text/javascript\">alert(\"Please upload Valid mp3 files.....\")</script>")
 		}
