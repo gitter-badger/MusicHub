@@ -1,32 +1,45 @@
 <html>
   <head>
     <title>Api Docs - MusicHub</title>
+    <link href="/hear?=favico.ico" rel="shortcut icon">
   </head>
   <style type="text/css">
   textarea{
     font-size: 14px;
+  }
+  .info{
+  	background-color: #EFEF56;
+  	margin-left: 15%;
+  	width: 70%;
+  	border-style: outset;
+  	border-width: 10px;
+  }
+  a,a:hover,a:visited,a:active{
+  	text-decoration: none;
   }
   </style>
   <script type="text/javascript">
   function putResult () {
     var queryString = document.getElementsByName('query')[0].value;
     var based = document.getElementsByTagName('select')[0].value;
+    var mode = document.getElementsByTagName('select')[1].value;
     var aurl = document.getElementsByTagName('a')[1];
-    var qs="/api/search?query="+queryString+"&based="+based;
+    var qs="/api/search?query="+queryString+"&based="+based+"&mode="+mode;
     aurl.setAttribute("href",qs);
     aurl.innerHTML="http://<listen-address>:<port>"+qs;
   }
   </script>
-  <body bgcolor="#9384f4">
+  <body bgcolor="#FD5F00">
+  <div class="info">
     <font face="Menlo">
       <center><h1>Api Docs - MusicHub</h1></center>
       <h2>Api Docs for developers</h2><hr>
       <p>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is a Api handling docs,for developers. This facility is a work under progress.
-	Still few implementations has been made so far. If you are not a fan of XML Data handling, please wait till JSON is made available.
-	For this tutorial it is assumed that you know what is meant by XML(<b>EX</b>tensible <b>M</b>arkup <b>L</b>anguage) and JSON(<b>J</b>ava<b>S</b>cript <b>O</b>bject <b>N</b>otation).
-	XML is a HTML like data notation Syntax.</p>
-  <h2>XML</h2><hr>
+	Still few implementations has been made so far.	For this tutorial it is assumed that you know what is meant by XML(<b>EX</b>tensible <b>M</b>arkup <b>L</b>anguage) and
+	JSON(<b>J</b>ava<b>S</b>cript <b>O</b>bject <b>N</b>otation).
+	</p><hr>
+  <h2>XML</h2>
   <textarea rows=12 cols=50 readonly="true">
 <languages>
   <language>
@@ -42,40 +55,71 @@
 </languages>
   </textarea>
   <p>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The above is an example of XML document that delivers readable message about the Programming languages.
-  This document can be parsed in any language natively or with extra libraries. This server app also returns xml data based on query.</p>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XML is a HTML like data notation Syntax. The above is an example of XML document that delivers readable message about the Programming languages.
+  This document can be parsed in any language natively or with extra libraries. This api server also returns xml data based on query.</p>
+  <hr><h2>JSON</h2>
+  <textarea rows=12 cols=50 readonly="true" style="width: 419px; height: 305px;">
+{
+  "languages": {
+    "language": [
+      {
+        "name": "golang",
+        "features": "80",
+        "performace": "99"
+      },
+      {
+        "name": "Python",
+        "features": "95",
+        "performace": "66"
+      }
+    ]
+  }
+}
+  </textarea><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JSON is a C/C++'s struct like data notation syntax. Again the above textbox gives the same XML Information
+  in JSON format. As the name suggests, this can be parsed natively by javascript.The api server can also return JSON data if the query is made correctly.
+  <hr>
   <h3>Query Method : </h3>
   <p>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let the MusicHub server is listening at port 1080, locally. The established server api search query url is <a href="http://127.0.0.1:1080/api/search">http://127.0.0.1:1080/api/search</a>. 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let the MusicHub server is listening at port 1080, locally. The established server api search query url is <a href="http://127.0.0.1:1080/api/search">http://127.0.0.1:1080/api/search</a>.
     Queries are handled through urls only. There is no form to post and to get the results back.
-    If a user searches for a (for example : "Overexposed"), append the API SQURL(API Search Query URL - API Squirell) with "?query=Overexposed" (The Squirell should look like "http://127.0.0.1:1080/api/search?query=Overexposed". If your database contains any song from the given query, the server returns a xml document. This is a basic query string. Obviously not always the user search is based on Album.The server by default queries the database based on album search.
+    If a user searches for a (for example : "Overexposed"), append the API SQURL(API Search Query URL - API Squirell) with "?query=Overexposed" (The Squirell should look like "http://127.0.0.1:1080/api/search?query=Overexposed". If your database contains any song from the given query, the server returns a XML or a JSON document.
+    This is a basic query string. Obviously not always the user search is based on Album.The server by default queries the database based on album search.
   </p>
   <p>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let us make our squirells more specific that the server searches accordingly.
-    To search the given keyword based on artist (example artist:"Maroon5"), the query string must be 
-    "?query=Maroon5&based=artist". Append that to the squirell. Now the Sqirell should look like "http://127.0.0.1:1080/api/search?query=Maroon5&based=artist"
-    If you have any Marron5 based songs in your database it will return something. 
+    To search the given keyword based on artist (example artist:"Maroon5"), the query string must be
+    "?query=Maroon5&based=artist". Append that to the squirell. Now the Sqirell should look like
+    "http://127.0.0.1:1080/api/search?query=Maroon5&based=artist".
+     If you have any Maroon5 based songs in your database it will return something.
   </p>
   <p>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The XML file obtained is human readable. In "songs" tag, every "song" tag contains the song attributes.
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The XML file or JSON file obtained is human readable. For XML, in "songs" tag, every "song" tag contains the song attributes.
   <li>title - Title of the song</li>
-  <li>album - Album of the song</li> 
+  <li>album - Album of the song</li>
   <li>artist - Artist of the song</li>
   <li>year - the year when the song is released</li>
   <li>url - Song URL in the server</li>
-  The Song URL shoul be suffixed with "http://127.0.0.1:1080/" or (whatever address and the port MusicHub listens......) to get the mp3 resource. 
+  The Song URL shoul be suffixed with "http://127.0.0.1:1080/" or (whatever address and the port MusicHub listens......) to get the mp3 resource.
+  Similar anology is applied for JSON document also.
   </p>
+  <hr>
   <h2>API Playground</h2>
   <p>
     This is form for you to fill up and see how the url looks like after.<br>
     <h3>Query String  <input type="text" name="query" onkeyup="putResult();" /><br>
-    Search Based on  
+    Search Based on
     <select onchange="putResult();">
       <option value="title">Title</option>
       <option value="album">Album</option>
       <option value="artist">Artist</option>
       <option value="year">Year</option>
-    </select> <br>
+    </select><br>
+    Search Mode
+    <select onchange="putResult();">
+      <option value="xml">XML</option>
+      <option value="json">JSON</option>
+    </select><br>
     <a href="#">Your URL Here</a><h3>
   </p>
   <p>
@@ -86,13 +130,33 @@
     Please avoid symbols in search query.
   </li>
   <li>
-    The query handlers can be in any order, (query=....&based=.... or based=....&query=....)
+    The query handlers can be in any permutation, (query=....&based=....&mode=.... or based=....&mode=....&query=....)
     Generally the first one is prefered.
   </li>
   <li>
     Developer Bonus : Try the query string "*ALL^*" and any based keyword &#128521; <br>*Only for developer purposes.
   </li>
-  <br><br><br><br><br><br>
+  <hr>
+  <h2>Changes:</h2>
+  <li>
+    <b>26.Sep.2015 : </b>Added Js to the search results page to display the album art of the playing song in the background.
+    Developers will get a XML page for a search query of our example:<br>
+    <textarea rows="4" cols="75" readonly="true" wrap="hard">
+<songs>
+  <song title="One More Night" album="Overexposed" artist="Maroon5" year="2012" url="hear?=Maroon_5_-_One_More_Night.mp3"/>
+</songs>
+    </textarea><br>
+    In the hear url, replace ".mp3" with ".png" to get the album art. That is, if the server is running at localhost port 8401, then
+    <i>http://127.0.0.1:8401/hear?=Maroon_5_-_One_More_Night.png</i> is the album art url of that song. This very important point to note.
+  </li>
+  <br>
+  <li>
+    <b>27.Sep.2015 : </b>Added JSON mode to the API server. The info is the same, so there won't be a problem in accessing the Album art
+    of the music
+  </li>
+  <hr>
     </font>
+    </div><br><br><br><br><br><br>
+    <center><font size="5" style="font-family:monospace;"><a href="credits">Credits</a></font></center><br>
   </body>
 </html>
