@@ -4,6 +4,7 @@ import 	"fmt"
 import "strconv"
 import	"net/http"
 import "os"
+import "os/exec"
 import "io"
 import "html/template"
 import "server/server/mp3metap"
@@ -27,7 +28,6 @@ func times(str string, ch byte)(int) {
 func log(printa string) {
 	fmt.Println(printa);
 }
-
 
 //Function for API requests
 //For More details refer api url of your server.
@@ -85,9 +85,16 @@ func Api(w http.ResponseWriter , r *http.Request){
 			log("Empty")
 			queryString ="sample"
 		}
-		fmt.Println(queryString,searchBase,mode,len(queryString))
+		if(len(mode)==0){
+			log("EMPTY")
+			mode="xml"
+		}
+		fmt.Println(queryString,searchBase,mode)
 		mdb,err := sql.Open("sqlite3","mdb.db")
 		var apiresult string = "<songs>\n"
+		if(mode == "json"){
+			apiresult  = "{\n\"songs\": {\n\t\"song\":["
+		}
 		if err != nil {
 				fmt.Println("Unable to access db")
 		}
@@ -108,28 +115,53 @@ func Api(w http.ResponseWriter , r *http.Request){
 			switch searchBase{
 			case "title":
 				if (isComparable(title,queryString)){
-					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					if (mode == "json"){
+						apiresult = apiresult + "\n\t\t\t{\"title\":\""+title+"\",\"album\":\""+album+"\",\"artist\":\""+artist+"\",\"year\":\""+year+"\",\"url\":\""+songURL+"\"},"
+					}else{
+						apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					}
 				}
 			case "album":
 				if (isComparable(album,queryString)){
-					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					if (mode == "json"){
+						apiresult = apiresult + "\n\t\t\t{\"title\":\""+title+"\",\"album\":\""+album+"\",\"artist\":\""+artist+"\",\"year\":\""+year+"\",\"url\":\""+songURL+"\"},"
+					}else{
+						apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					}
 				}
 			case "artist":
 				if (isComparable(artist,queryString)){
-					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					if (mode == "json"){
+						apiresult = apiresult + "\n\t\t\t{\"title\":\""+title+"\",\"album\":\""+album+"\",\"artist\":\""+artist+"\",\"year\":\""+year+"\",\"url\":\""+songURL+"\"},"
+					}else{
+						apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					}
 				}
 			case "year":
 				if (isComparable(year,queryString)){
-					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					if (mode == "json"){
+						apiresult = apiresult + "\n\t\t\t{\"title\":\""+title+"\",\"album\":\""+album+"\",\"artist\":\""+artist+"\",\"year\":\""+year+"\",\"url\":\""+songURL+"\"},"
+					}else{
+						apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					}
 				}
 			default:
 				if (isComparable(album,queryString)){
-					apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					if (mode == "json"){
+						apiresult = apiresult + "\n\t\t\t{\"title\":\""+title+"\",\"album\":\""+album+"\",\"artist\":\""+artist+"\",\"year\":\""+year+"\",\"url\":\""+songURL+"\"},"
+					}else{
+						apiresult = apiresult + "\t<song title=\""+title+"\" album=\""+album +"\" artist=\""+artist +"\" year=\"" + year + "\" url=\""+songURL+"\" />\n"
+					}
 				}
 			}
 		}
-		apiresult = apiresult + "</songs>"
-		w.Header().Set("Content-Type","application/xml")
+		if(mode == "json"){
+			apiresult = apiresult + "\n\t\t]\n\t}\n}"
+			w.Header().Set("Content-Type","application/json; charset=utf-8")
+		}else{
+			apiresult = apiresult + "</songs>"
+			w.Header().Set("Content-Type","application/xml")
+		}
 		fmt.Fprintf(w,apiresult)
 	}
 }
@@ -191,7 +223,7 @@ func Search(w http.ResponseWriter, r *http.Request){
 		if err != nil {
 			fmt.Println(err)
 		}
-		htmlContent := "<style>body{font-family:monospace;background-color:#3e3e3e;color:#000022;}td{border:solid;}a,a:hover,a:active,a:visited{text-decoration:none;}</style>"
+		htmlContent := "<style>body{font-family:monospace;background-color:#000000;color:#FD5F00;}td{  -moz-transition: width 0.3s;font-weight:bold;border:solid;}a,a:hover,a:active,a:visited{text-decoration:none;}</style>"
 		titleContent := "<body><h2>Results based on song title search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Hear Column</strong></td></tr>"
 		albumContent := "<h2>Results based on song album search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Hear Column</strong></td></tr>"
 		artistContent := "<h2>Results based on song artist search</h2><br><br><table>"+"<tr><td><strong>Title</strong></td><td><strong>Album</strong></td><td><strong>Artist</strong></td><td><strong>Year</strong></td><td><strong>Hear Column</strong></td></tr>"
@@ -209,16 +241,16 @@ func Search(w http.ResponseWriter, r *http.Request){
 				fmt.Println(err)
 			}
 			if (isComparable(title,keyword)){
-				titleContent = titleContent + "<tr><td>"+title+"</td><td>"+album+"</td><td> "+artist+"</td><td> "+year+"</td><td><audio id=\"a"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('a"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
+				titleContent = titleContent +   "<tr><td class=\"a"+strconv.Itoa(idname)+"\">"+title+"</td><td>"+album+"</td><td> "+artist+"</td><td> "+year+"</td><td><audio id=\"a"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('a"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
 			if (isComparable(album,keyword)){
-				albumContent = albumContent + "<tr><td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"b"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('b"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
+				albumContent = albumContent +   "<tr><td class=\"b"+strconv.Itoa(idname)+"\">"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"b"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('b"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
 			if (isComparable(artist,keyword)){
-				artistContent = artistContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"c"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('c"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
+				artistContent = artistContent + "<tr><td class=\"c"+strconv.Itoa(idname)+"\">"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"c"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('c"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
 			if (isComparable(year,keyword)){
-				yearContent = yearContent + "<td>"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"d"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('d"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
+				yearContent = yearContent +     "<tr><td class=\"d"+strconv.Itoa(idname)+"\">"+title+"</td><td>"+album+"</td><td>"+artist+"</td><td>"+year+"</td><td><audio id=\"d"+strconv.Itoa(idname)+"\" src=\"hear?="+songURL+"\" controls=\"\" onplay=\"isPlaying('d"+strconv.Itoa(idname)+"');\">Download</audio></td></tr>"
 			}
 			idname++
 			//fmt.Println(album, songURL)
@@ -227,8 +259,8 @@ func Search(w http.ResponseWriter, r *http.Request){
 		albumContent = albumContent + "</table>"
 		artistContent = artistContent + "</table>"
 		yearContent = yearContent + "</table></body>"
-		htmlContent = "<style>audio{background-color:rgba(126,20,20,1.0);width:500px;color:#FF265A}</style>"+htmlContent+titleContent+albumContent+artistContent+yearContent;
-		htmlContent = "<script type=\"text/javascript\">function isPlaying(idname){var elem = document.getElementsByTagName('audio');for(var idx = 0;idx<elem.length;idx++){if (!(elem[idx].id == idname)) {elem[idx].pause();}}var audio = document.getElementById(idname);audio.play();}</script>"+htmlContent
+		htmlContent = "<style>audio{background-color:rgba(126,20,20,1.0);width:500px;color:#FF265A}</style>"+htmlContent+titleContent+albumContent+artistContent+yearContent+"</html>";
+		htmlContent = "<html><title>Search Results - MusicHub</title><script type=\"text/javascript\">function isPlaying(idname){var elem = document.getElementsByTagName('audio');for(var idx = 0;idx<elem.length;idx++){if (!(elem[idx].id == idname)) {elem[idx].pause();}}var audio = document.getElementById(idname);var png = audio.src.replace(\".mp3\",\".png\");var titl=document.getElementsByClassName(idname)[0];document.title=titl.innerHTML+' - Now Playing';document.body.style.background=\"#000000 url(\"+png+\") no-repeat  center center fixed \";audio.play();}</script>"+htmlContent
 		w.Header().Set("Content-Type","text/html",)
 		fmt.Println("Post Method")
 		fmt.Fprintf(w, "<center><h1>Results</h1></center> \n %s",htmlContent)
@@ -257,6 +289,24 @@ func Upload(w http.ResponseWriter , r *http.Request){
 				handler.Filename = strings.Replace(handler.Filename," ","_",-1)
 				fmt.Println(handler.Filename, "indn")
 			}
+			if (strings.Contains(handler.Filename,"'")) {
+				handler.Filename = strings.Replace(handler.Filename,"'","_",-1)				
+			}
+			if (strings.Contains(handler.Filename,"(")) {
+				handler.Filename = strings.Replace(handler.Filename,"(","_",-1)				
+			}
+			if (strings.Contains(handler.Filename,")")) {
+				handler.Filename = strings.Replace(handler.Filename,")","_",-1)				
+			}
+			if (strings.Contains(handler.Filename,"%")) {
+				handler.Filename = strings.Replace(handler.Filename,"%","_",-1)				
+			}
+			if (strings.Contains(handler.Filename,"[")) {
+				handler.Filename = strings.Replace(handler.Filename,"[","_",-1)				
+			}
+			if (strings.Contains(handler.Filename,"]")) {
+				handler.Filename = strings.Replace(handler.Filename,"]","_",-1)				
+			}
 			f, err := os.OpenFile("./song/"+handler.Filename,os.O_WRONLY|os.O_CREATE,0666)
 			if err !=nil {
 				fmt.Println(err)
@@ -267,6 +317,17 @@ func Upload(w http.ResponseWriter , r *http.Request){
 			title,album,artist,year := mp3metap.Metaparse("./song/"+handler.Filename)
 			fmt.Println("Songfile : ","./song/"+handler.Filename)
 			md5sum := returnMD5.ReturnMD5("./song/"+handler.Filename)
+			cmd := exec.Command("alcov","/home/aki237/gospace/src/server/server/song/"+handler.Filename)
+			fmt.Println(cmd)
+			err = cmd.Run()
+			if err != nil{
+				fmt.Println("Unable to generate album art for "+"./song/"+handler.Filename+"\n",err)
+			}
+			// cmd = exec.Command("mv",strings.Replace(handler.Filename,".mp3",".*",-1),"./song/")
+			// err = cmd.Run()
+			// if err != nil{
+			// 	log("Unable mv the file - file not found")
+			// }
 			fmt.Println(title,album,artist,year,md5sum)
 			mdb,err := sql.Open("sqlite3","mdb.db")
 			if err != nil {
@@ -317,6 +378,10 @@ func Hear(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("HEAR_URL Requested")
 	if r.Method=="GET"{
 		urlQuery := string(r.URL.RawQuery)[1:]
+		if(strings.Contains(urlQuery,"../") || strings.Contains(urlQuery,"..")){
+			fmt.Fprintf(w,"Oh please I dont know about that.... You sucker")
+			return
+		}
 		urlQuery = "./song/"+ urlQuery
 		if strings.Contains(urlQuery,"%20"){
 			strings.Replace(urlQuery,"%20","\\ ",-1)
