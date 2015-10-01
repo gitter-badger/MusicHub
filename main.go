@@ -6,7 +6,7 @@ import "server/server/doc"
 import "fmt"
 import "io/ioutil"
 import "encoding/json"
-
+import "log"
 
 type Config struct{
 	Listenaddress string
@@ -17,6 +17,7 @@ func main() {
 	http.HandleFunc("/api",doc.Api)
 	http.HandleFunc("/api/search",serveraux.Api)
 	http.HandleFunc("/hear",serveraux.Hear)
+	http.HandleFunc("/module",serveraux.Module)
 	http.HandleFunc("/search", serveraux.Search)
 	http.HandleFunc("/upload", serveraux.Upload)
 	http.HandleFunc("/credits",serveraux.Credits)
@@ -32,5 +33,5 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println(conf.Listenaddress)
-	http.ListenAndServe(conf.Listenaddress, nil)
+	log.Fatal(http.ListenAndServe(conf.Listenaddress, nil))
 }
