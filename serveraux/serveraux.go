@@ -225,7 +225,7 @@ func Search(w http.ResponseWriter, r *http.Request){
 func Upload(w http.ResponseWriter , r *http.Request){
 	// fmt.Println("method : " , r[0:13],"}")
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("upload.gtpl")
+		t, _ := template.ParseFiles("upload.html")
 		t.Execute(w,nil)
 	}else{
 		r.ParseMultipartForm(32 << 20)
