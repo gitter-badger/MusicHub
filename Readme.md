@@ -65,6 +65,8 @@ The program will be listening at the port 1080 in your localhost for now. You ca
 + Search the keyword in your database to list out songs
 ![Search Page](pics/search.png)
 + Upload to upload your music........(This records the mp3 metadata in the database)
+![Search Page](pics/api.png)
++ API Page - http://[server]:[port]/api
 + Credits - Obvious
 + 404 - This is One easter egg smeared page :P
 
