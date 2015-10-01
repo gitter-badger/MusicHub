@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <title>MusicHub - Results</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/module?=audio.css" />
+    <script type="text/javascript" src="/module?=audio.js"></script>
+  </head>
+  <body>
+    <center>
+      <center>
+	<h1>Search</h1><br>
+	<input type="text" onkeyup="getAPI();"/>
+	<select onchange="putResult();">
+	  <option value="title">Title</option>
+	  <option value="album">Album</option>
+	  <option value="artist">Artist</option>
+	  <option value="year">Year</option>
+	</select>
+      </center>
+      <br>
+      <!--My audio player starts here-->
+      <div class="audiowin">
+      <div class="titlebar"></div>
+      <div class="audio">
+	<audio src="#"></audio>
+	<div class="albumart">
+	  <div class="info" position="bottom"><span id="infobar"><center>IDLE</center></span></div>
+	</div>
+	<div align="left"  class="seek" onmousedown="seekat(event)">
+	  <div class="doneSeek"></div>
+	</div>
+	<div class="controls">
+	  <center>
+	    <img onclick="Play(this);"  src="/module?=play.png"></img>
+	  </center>
+	</div>
+      </div>
+    </div>
+    <br><br>
+    <div class="table">
+      
+    </div>
+    </center>
+    <!--My audio player ends here-->
+    <script type="text/javascript">
+      var audiojs = document.getElementsByTagName('audio')[0];
+      audiojs.addEventListener("timeupdate",updateseek);
+    </script>
+  </body>
+</html>
