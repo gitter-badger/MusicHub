@@ -19,10 +19,8 @@
       </center>
       <br>
       <!--My audio player starts here-->
-      <div class="audiowin">
-      <div class="titlebar"></div>
       <div class="audio">
-	<audio src="#"></audio>
+	<audio src="#" onpause="pauseclicked();" onplay="playclicked();"></audio>
 	<div class="albumart">
 	  <div class="info" position="bottom"><span id="infobar"><center>IDLE</center></span></div>
 	</div>
@@ -31,11 +29,10 @@
 	</div>
 	<div class="controls">
 	  <center>
-	    <img onclick="Play(this);"  src="/module?=play.png"></img>
+	    <img onclick="Play();"  src="/module?=play.png"></img>
 	  </center>
 	</div>
       </div>
-    </div>
     <br><br>
     <div class="table">
       
