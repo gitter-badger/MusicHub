@@ -9,6 +9,7 @@ A music stash and search server.
 ### Installation
 
 I exactly don't know the `go get` way to get the source as my "gospace" is different.
+
 ![Folder Structure](pics/folder_struct.png)
 
 Probably you have to make a folder structure as follows.....(If you are ready to mess around with the import statements, just skip this.....)
@@ -37,28 +38,17 @@ go install
 ```
 This will compile that into a library.
 Now lets compile all other components and run the server.....
-#### Installing the returnMD5 component :
+#### Compiling other components
+To compile other components, a make file has been included
+```shell
+make
 ```
-cd $GOPATH/src/server/server/returnMD5
-go install
+Now to run the server,
+```shell
+make runserver
 ```
-#### Installing the mp3 metadataparser :
-```
-cd $GOPATH/src/server/server/mp3metap
-go install
-```
-#### Installing the server auxiliary script :
-```
-cd $GOPATH/src/server/server/serveraux
-go install
-```
-#### Installing the main server and running it:
-```
-cd $GOPATH/src/server/server/
-go install
-$GOPATH/bin/server
-```
-The program will be listening at the port 1080 in your localhost for now. You can change that by altering the line [15 in main.go](https://github.com/aki237/MusicHub/blob/master/main.go#L15).
+The program will be listening at the port 1080 in your localhost for now. You can change that by altering the "hubconfig.json" file in the project folder.
+Also make sure that ffmpeg tools are installed, and are in the PATH variable. This project is built and tested in Fedora 22 environment.
 
 ### Usage
 ![Home Page](pics/homepage.png)
@@ -72,7 +62,7 @@ The program will be listening at the port 1080 in your localhost for now. You ca
 
 ### Contributing
 + Get a good grasp of golang.([This book](https://www.golang-book.com/) is fast and awesome)
-+ Please report any issues of loopholes in this project.
++ Please report any issues or loopholes in this project.
 
 
 ###### Extras
