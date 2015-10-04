@@ -62,7 +62,7 @@ The program will be listening at the port 1080 in your localhost for now. You ca
 
 ### Usage
 ![Home Page](pics/homepage.png)
-+ Search the keyword in your database to list out songs
++ Search the keyword in your database to list out songs (New updated search page : with a nice looking player)
 ![Search Page](pics/search.png)
 + Upload to upload your music........(This records the mp3 metadata in the database)
 ![Search Page](pics/api.png)
