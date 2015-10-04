@@ -239,8 +239,7 @@ func Upload(w http.ResponseWriter , r *http.Request){
 		//fmt.Println(returnMD5.ReturnMD5(handler.Filename))
 		// if(handler.Header["Content-Type"][0] == "audio/mpeg" || handler.Header["Content-Type"][0] == "audio/mp3") {
 		switch (handler.Header["Content-Type"][0]){
-		case "audio/mpeg":
-		case "audio/mp3":
+		case "audio/mpeg","audio/mp3":
 			if(strings.Contains(handler.Filename," ")){
 				handler.Filename = strings.Replace(handler.Filename," ","_",-1)
 				fmt.Println(handler.Filename, "indn")
