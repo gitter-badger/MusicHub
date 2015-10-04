@@ -6,38 +6,40 @@ function updateseek(){
 	var perc = (cur * 100.0) / tot;
 	// console.log("'" +(Math.round(perc)*350).toString()+"'");
 	seek.style.width = perc.toString()+"%";
-}
-function Play (x) {
-	var audio  = document.getElementsByTagName("audio")[0];
-	var albumart = document.getElementsByClassName("albumart")[0];
-	var seek = document.getElementsByClassName("doneSeek")[0];
-	// seek.style.width = "100%";
-	seek.style.background="#f92672";
-	if(x.src.search("pause.png") != -1){
-	    //Pause is pressed
-	    x.src = "/module?=play.png";
-	    albumart.style.background = "#f92672 url('/module?=albumart.png') no-repeat center center";
-	    document.body.style.background = "#000000 url('/module?=albumart.png') no-repeat center center";
-	    albumart.style.backgroundSize = "100% 100%";
-	    // document.body.style.backgroundSize = "100% 100%";
-	    // infobar.innerHTML = "<center>IDLE</center>"
-	    audio.pause();
-	    return;
+	if(perc==100){
+		pauseclicked();
 	}
-    if(x.src.search("play.png") != -1){
-	//Play is pressed
-	console.log(audio.duration,audio.currentTime);
-	x.src = "/module?=pause.png";
-	var img = audio.src.replace(".mp3",".png");
-	albumart.style.background = "#f92672 url('"+img+"') no-repeat center center";
-	document.body.style.background = "#000000 url('"+img+"') no-repeat center center";
-	audio.play();
-	albumart.style.backgroundSize = "100% 100%";
-	// document.body.style.backgroundSize = "100% 100%";
-	return;
-    }
+}
+function Play () {
+	var audio  = document.getElementsByTagName("audio")[0];
+	var x = document.getElementsByTagName("img")[0];
+	if (x.src.search("pause.png") !=-1){
+		pauseclicked();
+	}else{
+		playclicked();
+	}
 }
 
+function playclicked() {
+	var audio = document.getElementsByTagName("audio")[0];
+	var control = document.getElementsByTagName("img")[0];
+	var albumart = document.getElementsByClassName("albumart")[0];
+	control.src = "/module?=pause.png";
+	var img = audio.src.replace(".mp3",".png");
+	albumart.style.background = "#f92672 url('"+img+"') no-repeat center center";
+	albumart.style.backgroundSize = "100% 100%";
+	audio.play();
+}
+
+function pauseclicked(){
+	var audio = document.getElementsByTagName("audio")[0];
+	var control = document.getElementsByTagName("img")[0];
+	var albumart = document.getElementsByClassName("albumart")[0];
+	control.src = "/module?=play.png";
+	albumart.style.background = "#f92672 url('/module?=albumart.png') no-repeat center center";
+	albumart.style.backgroundSize = "100% 100%";
+	audio.pause();
+}
 function seekat (e) {
     var parent = document.getElementsByClassName("audio")[0];
     var x = e.clientX-parent.offsetLeft;
@@ -46,9 +48,7 @@ function seekat (e) {
     var percent = (x)/parent.offsetWidth;
     var audio  = document.getElementsByTagName("audio")[0];
     audio.currentTime = percent*audio.duration;
-    var imf = document.getElementsByTagName("img")[0];
-    audio.pause();
-    Play(imf);
+    //audio.pause();
 }
 
 function startPlay (aurl) {
@@ -68,7 +68,7 @@ function startPlay (aurl) {
     var audio = document.getElementsByTagName("audio")[0];
     document.title = title + " - Now Playing"
     audio.src = url;
-    Play(imf);
+    audio.play();
 }
 
 function getAPI(){
