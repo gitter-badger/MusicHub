@@ -53,6 +53,7 @@ Also make sure that ffmpeg tools are installed, and are in the PATH variable. Th
 ### Usage
 ![Home Page](pics/homepage.png)
 + Search the keyword in your database to list out songs (New updated search page : with a nice looking player)
+  (Now this player is movable around the page with the help of the handle on the top left corner.)
 ![Search Page](pics/search.png)
 + Upload to upload your music........(This records the mp3 metadata in the database)
 ![Search Page](pics/api.png)
