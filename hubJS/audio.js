@@ -1,44 +1,67 @@
+/*
+#####################audio.js################################
+#This is the file that controls the audio frontend of hubJS.#
+#Functions :                                                #
+# * updateseek    -    to update the seeker (doneseek class)#
+# * Play          -    the function called when the control #
+#                      buttons are pressed                  #
+# * stopped       -    The function called when song stops  #
+# * pause/play    -    functions called to control audio    #
+# * seekat        -    when the audio is being skipped      #
+# * startplay     -    function to update the info bar      #
+# * getAPI        -    gets the Results                     #
+#############################################################
+*/
 function updateseek(){
-	var audio  = document.getElementsByTagName("audio")[0];
-	var seek = document.getElementsByClassName("doneSeek")[0];
-	var tot = audio.duration;
-	var cur = audio.currentTime;
-	var perc = (cur * 100.0) / tot;
-	// console.log("'" +(Math.round(perc)*350).toString()+"'");
-	seek.style.width = perc.toString()+"%";
-	if(perc==100){
-		pauseclicked();
-	}
+    var audio  = document.getElementsByTagName("audio")[0];
+    var seek = document.getElementsByClassName("doneSeek")[0];
+    var tot = audio.duration;
+    var cur = audio.currentTime;
+    var perc = (cur * 100.0) / tot;
+    // console.log("'" +(Math.round(perc)*350).toString()+"'");
+    seek.style.width = perc.toString()+"%";
+    if(perc==100){
+	stopped();
+    }
 }
 function Play () {
-	var audio  = document.getElementsByTagName("audio")[0];
-	var x = document.getElementsByTagName("img")[0];
-	if (x.src.search("pause.png") !=-1){
-		pauseclicked();
-	}else{
-		playclicked();
-	}
+    var audio  = document.getElementsByTagName("audio")[0];
+    var x = document.getElementsByTagName("img")[0];
+    if (x.src.search("pause.png") !=-1){
+	pauseclicked();
+    }else{
+	playclicked();
+    }
 }
 
+function stopped(){
+    var audio = document.getElementsByTagName("audio")[0];
+    var control = document.getElementsByTagName("img")[0];
+    var albumart = document.getElementsByClassName("albumart")[0];
+    control.src = "/module?=play.png";
+    albumart.style.background = "#f92672 url('/module?=albumart.png') no-repeat center center";
+    albumart.style.backgroundSize = "100% 100%";
+    audio.pause();
+}
 function playclicked() {
-	var audio = document.getElementsByTagName("audio")[0];
-	var control = document.getElementsByTagName("img")[0];
-	var albumart = document.getElementsByClassName("albumart")[0];
-	control.src = "/module?=pause.png";
-	var img = audio.src.replace(".mp3",".png");
-	albumart.style.background = "#f92672 url('"+img+"') no-repeat center center";
-	albumart.style.backgroundSize = "100% 100%";
-	audio.play();
+    var audio = document.getElementsByTagName("audio")[0];
+    var control = document.getElementsByTagName("img")[0];
+    var albumart = document.getElementsByClassName("albumart")[0];
+    control.src = "/module?=pause.png";
+    var img = audio.src.replace(".mp3",".png");
+    albumart.style.background = "#f92672 url('"+img+"') no-repeat center center";
+    albumart.style.backgroundSize = "100% 100%";
+    audio.play();
 }
 
 function pauseclicked(){
-	var audio = document.getElementsByTagName("audio")[0];
-	var control = document.getElementsByTagName("img")[0];
-	var albumart = document.getElementsByClassName("albumart")[0];
-	control.src = "/module?=play.png";
-	albumart.style.background = "#f92672 url('/module?=albumart.png') no-repeat center center";
-	albumart.style.backgroundSize = "100% 100%";
-	audio.pause();
+    var audio = document.getElementsByTagName("audio")[0];
+    var control = document.getElementsByTagName("img")[0];
+    var albumart = document.getElementsByClassName("albumart")[0];
+    control.src = "/module?=play.png";
+    //albumart.style.background = "#f92672 url('/module?=albumart.png') no-repeat center center";
+    albumart.style.backgroundSize = "100% 100%";
+    audio.pause();
 }
 function seekat (e) {
     var parent = document.getElementsByClassName("audio")[0];
@@ -63,7 +86,7 @@ function startPlay (aurl) {
     var album = document.getElementById(albumi).innerHTML;
     var artist = document.getElementById(artisti).innerHTML;
     var year = document.getElementById(yeari).innerHTML;
-    infobar.innerHTML = "<center><font size=\"2\">"+title+"</font><br><font size=\"2\">"+album+"&nbsp&nbsp-&nbsp&nbsp"+artist+"<br>"+year+"</font></center>";
+    infobar.innerHTML = "<center><font size=\"2\">"+title+"</font><br><font size=\"2\">"+album+"&nbsp&nbsp-&nbsp&nbsp"+artist+"<br></font></center>";
     var imf = document.getElementsByTagName("img")[0];
     var audio = document.getElementsByTagName("audio")[0];
     document.title = title + " - Now Playing"

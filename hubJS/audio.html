@@ -21,15 +21,20 @@
       <!--My audio player starts here-->
       <div class="audio">
 	<audio src="#" onpause="pauseclicked();" onplay="playclicked();"></audio>
-	<div class="albumart">
-	  <div class="info" position="bottom"><span id="infobar"><center>IDLE</center></span></div>
+	<div class="titlebar">
+	  <div class="dragger"  draggable="true"></div>
 	</div>
-	<div align="left"  class="seek" onmousedown="seekat(event)">
-	  <div class="doneSeek"></div>
+	<div class="albumart">
+	  <div class="info" position="bottom">
+	    <span id="infobar"><center>IDLE</center></span>
+	  </div>
+	  <div align="left"  class="seek" onmousedown="seekat(event)">
+	    <div class="doneSeek"></div>
+	  </div>
 	</div>
 	<div class="controls">
 	  <center>
-	    <img onclick="Play();"  src="/module?=play.png"></img>
+	    <img onclick="Play();"  src="/module?=play.png">
 	  </center>
 	</div>
       </div>
@@ -40,8 +45,28 @@
     </center>
     <!--My audio player ends here-->
     <script type="text/javascript">
+      window.onload = addListeners;
       var audiojs = document.getElementsByTagName('audio')[0];
       audiojs.addEventListener("timeupdate",updateseek);
+      function addListeners(){
+      document.getElementsByClassName('dragger')[0].addEventListener('mousedown', mouseDown, false);
+      window.addEventListener('mouseup', mouseUp, false);
+      }
+
+      function mouseUp()
+      {
+      window.removeEventListener('mousemove', divMove, true);
+      }
+
+      function mouseDown(e){
+      window.addEventListener('mousemove', divMove, true);
+      }
+      
+      function divMove(e){
+      var div = document.getElementsByClassName('audio')[0];
+      div.style.left= (e.pageX) + "px";
+      div.style.top= (e.pageY) + "px";
+      }
     </script>
   </body>
 </html>

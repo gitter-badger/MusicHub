@@ -8,15 +8,7 @@ body{
 }
 h1{
     font-family: my;
-    color:white;
-}
-
-
-.audio{
-	background-color: #000000;
-	height:350px;
-	width:350px;
-	box-shadow: 20px 20px 10px #DEDEDE;
+    color:#F92672;
 }
 
 input,select {
@@ -29,19 +21,46 @@ input,select {
 	border-radius:10px;
 }
 
+.audio{
+    position:absolute;
+    top:10px;
+    left:10px;
+    background-color: rgba(255,255,255,0);
+    height:350px;
+    width:260px;
+    box-shadow: 5px 5px 10px #272822;
+}
+
+.titlebar{
+    width:100%;
+    height:4%;
+    background-color:rgba(255,255,255,0);
+    text-align:left;
+}
+.dragger{
+    width:6%;
+    height:100%;
+    height:100%;
+    background-color:rgba(39,40,34,0.8);
+    border:2px solid;
+    border-color:rgba(39,40,34,0.8);
+    border-radius:5px;
+    box-shadow: 5px 5px 10px #272822;
+}
+
 .albumart{
 	position:relative;
 	background:url('/module?=albumart.png')  no-repeat center center;
 	background-size: 100% 100%;
 	width:100%;
-	height:80%;
+	height:76%;
 	transition: background 0.1s linear;
     -moz-transition: background 0.1s linear;
     -webkit-transition: background 0.1 linear;
 }
 .info{
 	position:absolute;
-	background-color: rgba(39,40,34,0.8);
+	background-color: rgba(255,255,255,0.2);
 	width: 100%;
 	height:24%;
 	bottom:0px;
@@ -52,17 +71,20 @@ input,select {
 	font-size: 24;
 }
 .seek{
-	background-color: #FFFFFF;
+	position:absolute;
+	background-color: rgba(255,255,255,0);
 	width: 100%;
-	height:2%;
+	height:1.5%;
+	bottom:0px;
 }
 .doneseek{
 	text-align: left;
 	height:100%;
+	width:0%;
 	background-color:#f92672 ;
 }
 .controls{
-	height:19%;
+	height:20%;
 	width:100%;
 	background-color: #272822;
 }
@@ -79,11 +101,21 @@ img:active{
 }
 
 table{
-	border-style: dashed;
+	border-style: solid;
 	border-width: 5px;
 }
 td{
-	background-color: #FFFFFF;
-	border-style: inset;
+        background-color: #272822;
+        color:#F92672;
+	border-style: solid;
 	border-width: 5px;
+}
+
+button{
+    width:70px;
+    height:40px;
+    background-color:#F92672;
+    color:#272822;
+    border:0px hidden;
+    border-radius:5px;
 }
