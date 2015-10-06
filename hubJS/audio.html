@@ -55,10 +55,14 @@
 
       function mouseUp()
       {
+      var div = document.getElementsByClassName('audio')[0];
+      div.style.opacity = 1;
       window.removeEventListener('mousemove', divMove, true);
       }
 
       function mouseDown(e){
+      var div = document.getElementsByClassName('audio')[0];
+      div.style.opacity = 0.5;
       window.addEventListener('mousemove', divMove, true);
       }
       
@@ -70,3 +74,4 @@
     </script>
   </body>
 </html>
+1
