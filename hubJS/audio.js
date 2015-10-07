@@ -86,7 +86,7 @@ function startPlay (aurl) {
     var album = document.getElementById(albumi).innerHTML;
     var artist = document.getElementById(artisti).innerHTML;
     var year = document.getElementById(yeari).innerHTML;
-    infobar.innerHTML = "<center><font size=\"2\">"+title+"</font><br><font size=\"2\">"+album+"&nbsp&nbsp-&nbsp&nbsp"+artist+"<br></font></center>";
+    infobar.innerHTML = "<center><font size=\"2\">"+title+"</font><br><font size=\"2\"><a id='pjsalbum' onclick='getthis(this);'>"+album+"</a>&nbsp&nbsp-&nbsp&nbsp<a id='pjsartist' onclick='getthis(this);'>"+artist+"</a><br></font></center>";
     var imf = document.getElementsByTagName("img")[0];
     var audio = document.getElementsByTagName("audio")[0];
     document.title = title + " - Now Playing"
@@ -97,6 +97,7 @@ function startPlay (aurl) {
 function getAPI(){
     var invocation = new XMLHttpRequest();
     var keyword = document.getElementsByTagName('input')[0].value;
+    keyword = keyword.split(" ").join("_")
     var based = document.getElementsByTagName('select')[0].value;
     var workarea = document.getElementsByClassName('table')[0].innerHTML="<table><tbody>";
     // console.log(keyword);
@@ -125,3 +126,18 @@ function getAPI(){
     var url = '/api/search?query='+keyword+'&based='+based+'&mode=json';
     callOtherDomain();
 }
+
+
+function getthis(ael){
+    if(ael.getAttribute('id') == 'pjsalbum'){
+	document.getElementsByTagName("select")[0].value = "album";
+	document.getElementsByTagName("input")[0].value = ael.innerHTML;
+    }else{
+	document.getElementsByTagName("select")[0].value = "artist";
+	document.getElementsByTagName("input")[0].value = ael.innerHTML;
+    }
+    getAPI();
+}
+
+
+//infobar.innerHTML = "<center><font size=\"2\">"+title+"</font><br><font size=\"2\"><a id='pjsalbum' onclick='getthis(this);'>"+album+"</a>&nbsp&nbsp-&nbsp&nbsp<a id='pjsartist' onclick='getthis(this);'>"+artist+"</a><br></font></center>";
