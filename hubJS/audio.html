@@ -9,8 +9,8 @@
     <center>
       <center>
 	<h1>Search</h1><br>
-	<input type="text" onkeyup="getAPI();"/>
-	<select onchange="putResult();">
+	<input type="text" onkeyup="getAPI();" onchange="getAPI();"/>
+	<select onchange="getAPI();">
 	  <option value="title">Title</option>
 	  <option value="album">Album</option>
 	  <option value="artist">Artist</option>
@@ -21,10 +21,8 @@
       <!--My audio player starts here-->
       <div class="audio">
 	<audio src="#" onpause="pauseclicked();" onplay="playclicked();"></audio>
-	<div class="titlebar">
-	  <div class="dragger"  draggable="true"></div>
-	</div>
 	<div class="albumart">
+	  <div class="dragger"  draggable="true"></div>
 	  <div class="info" position="bottom">
 	    <span id="infobar"><center>IDLE</center></span>
 	  </div>
