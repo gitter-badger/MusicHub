@@ -75,7 +75,6 @@ func Api(w http.ResponseWriter , r *http.Request){
 				i++;
 				fmt.Println(i,len(urlParts))
 		}
-
 		if (len(searchBase)==0) {
 			log("Empty")
 			searchBase ="album"
@@ -87,6 +86,10 @@ func Api(w http.ResponseWriter , r *http.Request){
 		if(len(mode)==0){
 			log("EMPTY")
 			mode="xml"
+		}
+		if(strings.Contains(queryString,"_")){
+			fmt.Println("Contains space")
+			queryString = strings.Replace(queryString,"_"," ",-1)
 		}
 		fmt.Println(queryString,searchBase,mode)
 		mdb,err := sql.Open("sqlite3","mdb.db")
@@ -186,6 +189,9 @@ func isComparable(main string , compared string) (bool){
 			value = true
 		}
 		if(strings.Contains(main,strings.ToUpper(string(compared[0])) + compared[1:])){
+			value = true
+		}
+		if(strings.Contains(strings.ToLower(main),strings.ToLower(compared))){
 			value = true
 		}
 	}
