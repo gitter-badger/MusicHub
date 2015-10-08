@@ -91,6 +91,10 @@ func Api(w http.ResponseWriter , r *http.Request){
 			fmt.Println("Contains space")
 			queryString = strings.Replace(queryString,"_"," ",-1)
 		}
+		if(strings.Contains(queryString,"%27")){
+			fmt.Println("Detected!!!!!!")
+			queryString = strings.Replace(queryString,"%27","'",-1)
+		}
 		fmt.Println(queryString,searchBase,mode)
 		mdb,err := sql.Open("sqlite3","mdb.db")
 		var apiresult string = "<songs>\n"
@@ -340,9 +344,6 @@ func Hear(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		urlQuery = "./song/"+ urlQuery
-		if strings.Contains(urlQuery,"%20"){
-			strings.Replace(urlQuery,"%20","\\ ",-1)
-		}
 		fmt.Println(urlQuery)
 		http.ServeFile(w,r,urlQuery)
 	}
