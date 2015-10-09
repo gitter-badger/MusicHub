@@ -1,5 +1,7 @@
 # MusicHub
 ###### Written in golang by @aki237 and @hermes
+
+[![Join the chat at https://gitter.im/aki237/MusicHub](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aki237/MusicHub?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 A music stash and search server.
 ## Synopsis
 + Installation
